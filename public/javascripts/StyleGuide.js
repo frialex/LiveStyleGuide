@@ -35,8 +35,12 @@ console.log('Loading styleguide');
     }); //StyleSheets
 
     function extractFocus(rule){
-        console.log('Found :focus');
-        console.log(rule);
+        //console.log('Found :focus');
+        //console.log(rule);
+        extractRule(rule, function(sel, ast){
+            var dotted = sel.replace(/:focus/g, '.focus');
+            setPseudoRuleAsInline(sel, dotted, ast);
+        });
     }
     function extractHover(rule){
         console.log('Found :hover');
@@ -47,14 +51,36 @@ console.log('Loading styleguide');
         console.log(rule);
     }
 
-    function setPseudoRuleAsInline(sel, dotted, astrule){
 
-    };
-
-
-                         //(string) => string
-    function extractRule(replacer){
-        
+    //AST returned by css-parser:
+    //stylesheet
+    //  rules[]
+    //  declarations[]
+    //  selectors[]
+    function extractRule(rule, callback){
+        //debugger;
+        var ast = cssParser(rule.cssText);
+        $.each(ast.stylesheet.rules, function(i, astrule){
+            $.each(astrule.selectors, function(i, sel){
+                callback(sel, astrule);
+            });
+        });
     }
+
+
+    function setPseudoRuleAsInline(sel, dotted, astrule){
+        var $all = $(dotted);
+        if($all.length){
+            console.groupCollapsed(sel);
+            console.log(dotted);
+            $all.each(function(i, el){ console.log(el); });
+
+            $.each(astrule.declarations, function(i, d){
+                $all.css(d.property, d.value);
+            });
+
+            console.groupEnd(sel);
+        }
+    };
 
 })
