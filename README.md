@@ -2,10 +2,10 @@ Observe CSS pseudo rules without user interaction!
 
 Running
 ==========
-npm install
-bower install
-nodemon
-http://localhost:3000
+1. npm install
+2. bower install
+3. nodemon
+4. http://localhost:3000
 
 Goal
 ==========

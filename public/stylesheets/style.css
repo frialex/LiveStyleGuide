@@ -1,4 +1,20 @@
-body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+body { font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+
+article {
+    margin-bottom: 10px;
+    text-align: center;
 }
+article > h4 { margin-bottom: 0; }
+
+
+.style-guide-element {
+    display: inline-block;
+
+    padding: 5px;
+    border: 1px solid lightgray;
+    margin-top: 5px;
+}
+.style-guide-element *:last-child { margin-left: 5px; }
+
+
 
