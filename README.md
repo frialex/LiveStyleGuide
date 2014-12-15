@@ -34,7 +34,18 @@ Make changes to css file, and observe the consequence in the browser without any
 High Level Strategy
 ==========
 
-Starting point
-document.styleSheets contains all the style rules in the web page in a very structured format.
+Though its possible to get inline style rules using $("[style]")[n].style,
+the value of external stylesheets must be obtained through document.styleSheets.
+
+Or, another method that seems promissing:
+window.getComputedStyle( domQuerySelector, pseudoClass)
+window.getComputedStyle( document.querySelector('.btn.btn-primary'), ':hover')
+returns CSSStyleDeclaration
 
 Bringing in a css parser instead of doing indexOf and string concatenation.
+iterate over document.styleSheets
+    foreach rule
+        create AST
+            foreach selectors
+                match on /:hover|:active|:focus/g
+
