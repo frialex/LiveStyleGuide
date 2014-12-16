@@ -1,11 +1,11 @@
 body { font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+h1   { text-align: center; margin-bottom: 60px; }
 
 article {
-    margin-bottom: 10px;
+    margin-bottom: 50px;
     text-align: center;
 }
 article > h4 { margin-bottom: 0; }
-
 
 .style-guide-element {
     display: inline-block;
@@ -14,9 +14,15 @@ article > h4 { margin-bottom: 0; }
     border: 1px solid lightgray;
     margin-top: 5px;
 }
-.style-guide-element *:last-child { margin-left: 5px; }
+.style-guide-element > *:last-child { margin-left: 5px; }
 
 
+
+/* Client X requested light gray as the default buttons color 
+ .btn {
+    background-color: lightgray;
+}
+*/
 
 /* Client Requestd toxic green as their active color
 .btn:active {

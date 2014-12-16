@@ -4,11 +4,38 @@ article
   div.style-guide-element
     p Normal
     div.dropdown
-      button.dropdown-toggle(data-toggle='dropdown')
+      button.btn.btn-default.dropdown-toggle(data-toggle='dropdown', type='button')
         i.glyphicon.glyphicon-cog
         span Closed
       ul.dropdown-menu
         li(role='presentation'): a First Item
 
 
+  div.style-guide-element
+    p :hover
+    div.dropdown
+      button.btn.btn-default.dropdown-toggle.hover(data-toggle='dropdown', type='button')
+        i.glyphicon.glyphicon-cog
+        span Closed :hover
+      ul.dropdown-menu
+        li(role='presentation'): a First Item
+
+  div.style-guide-element
+    p :focus :active
+    div.dropdown
+      button.btn.btn-default.dropdown-toggle.focus.active(data-toggle='dropdown', type='button')
+        i.glyphicon.glyphicon-cog
+        span Clicked
+      ul.dropdown-menu
+        li(role='presentation')
+          a First Item
+
+  div.style-guide-element
+    p :hover
+    div.dropdown.open
+      button.btn.btn-default.dropdown-toggle.hover(data-toggle='dropdown', type='button')
+        i.glyphicon.glyphicon-cog
+        span Open
+      ul.dropdown-menu
+        li(role='presentation'): a First Item
 
