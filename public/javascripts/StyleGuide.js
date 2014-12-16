@@ -64,16 +64,12 @@ console.log('Loading styleguide');
         });
     }
     function extractHover(rule){
-        //console.log('Found :hover');
-        //console.log(rule);
         extractRule(rule, function extract_hover_cb(sel, ast){
             var dotted = sel.replace(/:hover/g, '.hover');
             setPseudoRuleAsInline(sel, dotted, ast);
         });
     }
     function extractActive(rule){
-        //console.log('Found :active');
-        //console.log(rule);
         extractRule(rule, function extract_active_cb(sel, ast){
             var dotted = sel.replace(/:active/g, '.active');
             setPseudoRuleAsInline(sel, dotted, ast);
