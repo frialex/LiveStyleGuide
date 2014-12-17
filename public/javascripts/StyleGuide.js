@@ -1,80 +1,57 @@
 //document.styleSheets
-//CSSStyleSheet 1->n        : an entry for a stylesheet / inline. seems to preserve load order
-//  cssRules[]
-//      parentRule[]
-//      parentStyleSheet[]
-//      selectorText        : just the selector for the rule set
-//      cssText             => selector + rules !! leverage this to find pseudo rules !!
+    //CSSStyleSheet 1->n        : an entry for a stylesheet / inline. seems to preserve load order
+    //  cssRules[]
+    //      parentRule[]
+    //      parentStyleSheet[]
+    //      selectorText        : just the selector for the rule set
+    //      cssText             => selector + rules !! leverage this to find pseudo rules !!
 
 
 //note: naming functions for a cleaner stack trace
 $(function app_main(){
-console.log('Loading styleguide');
 
-    //DOM API doesn't provide an easy iterator for objects, options are:
-        //1) for(var key in document.styleSheets){ takeAction(document.stylesheets[key]); }
-        //
-        //2) var fe = Array.prototype.forEach.bind(document.styleSheets);
-        //   fe(function(styleSheet){ takeAction(stylesheet); });
-        //
-        //3) Array.prototype.forEach.call(document.styleSheets, lambda)
-        //
-        //4) Object.keys(document.styleSheets).forEach(lambda)
-        //
-        //5) jQuery / underscore / ...
+    //global for testing
+    pseudos = /:(active|focus|hover)/g
 
-    //Whats the difference between all these methods?
-        //1) Easy check to  .hasOwnProperty() and standard programming construct
-        //
-        //2) Since the context is bound to document.styleSheets, you can pass it around
-        //   to lambdas without worrying about execution context
-        //
-        //4) Since Object.keys returns an array, you can perform all the functional programming
-        //   methods on it: filter, sort, ... before executing the lambda
-        //   var numeric_keys Object.keys(document.styleSheets).filter(function(k){ return !isNaN(k); });
+    var handlers = {
+        media:          function(rule){ console.log(rule); },
+        rule:           function(rule){ ruleExtractor(rule); },
+        'font-face':    function(rule){ console.log(rule); },
+        'keyframes':    function(rule){ console.log(rule); }
+    }
+
+
+    function ruleExtractor(ruleast){
+        //1) foreach rule.selector
+        //1.a) pseudo.exec(sel)
+        //1.b) 
+
+        $.each(ruleast.selectors, function(i, sel){
+            //testing casues the regex state machines to advance
+            //thus causing the exec to fail?
+            if(pseudos.test(sel)){
+                var type = pseudos.exec(sel);
+            }
+        });
+    }
 
     $.each(document.styleSheets, function extract_from_browser(i, ss){
         var groupname = ss.href ? ss.href : 'inline-style';
-        console.groupCollapsed(groupname);
+        //console.groupCollapsed(groupname);
+        console.group(groupname);
 
         $.each(ss.cssRules, function foreach_browser_rule(i, rule){
-            //ignore media queries for now
-            if(rule instanceof CSSStyleRule){
-                //multiple pseudos can be part of single ruleset
-                //selector:hover, selector:active { rules.. }
 
-                if(rule.cssText.indexOf(':focus') > 0)
-                    extractFocus(rule);
+            var ast         = cssParser(rule.cssText);
+            var rule        = ast.stylesheet.rules[0];
+            var selectors   = rule.selectors
 
-                if(rule.cssText.indexOf(':hover') > 0)
-                    extractHover(rule);
+            handlers[rule.type](rule);
 
-                if(rule.cssText.indexOf(':active') > 0)
-                    extractActive(rule);
-            }
-        }); //cssRules
-
+        });
         console.groupEnd(groupname);
-    }); //StyleSheets
+    });
 
-    function extractFocus(rule){
-        extractRule(rule, function extract_focus_cb(sel, ast){
-            var dotted = sel.replace(/:focus/g, '.focus');
-            setPseudoRuleAsInline(sel, dotted, ast);
-        });
-    }
-    function extractHover(rule){
-        extractRule(rule, function extract_hover_cb(sel, ast){
-            var dotted = sel.replace(/:hover/g, '.hover');
-            setPseudoRuleAsInline(sel, dotted, ast);
-        });
-    }
-    function extractActive(rule){
-        extractRule(rule, function extract_active_cb(sel, ast){
-            var dotted = sel.replace(/:active/g, '.active');
-            setPseudoRuleAsInline(sel, dotted, ast);
-        });
-    }
 
     //input: selector1, selectorN { ruleset }
     //output: AST by css-parser:
@@ -110,18 +87,3 @@ console.log('Loading styleguide');
 
 })
 
-
-//Could make it 'elegant' by applying functional programming concepts and closures
-//
-//var extract = {
-// ":hover" : function(rule){ ... },
-// ":focus" : function(rule){ ... },
-// ":active": function(rule){ ... }
-//}
-//
-// rule.cssText.match(/:hover|:focus|:active/g)
-//             .forEach(function(type){ extract[type](rule); })
-//
-//
-//But I prefer simplicity of the current structure. Take out the g from regexp and watch it fail.
-//
