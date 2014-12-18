@@ -10,38 +10,46 @@
 //note: naming functions for a cleaner stack trace
 $(function app_main(){
 
-    //global for testing
-    pseudos = /:(active|focus|hover)/g
+    //removing /g since rules iterated over the ast, which gives it as a selector array.
+    var pseudos = /:(active|focus|hover)/
 
     var handlers = {
-        media:          function(rule){ console.log(rule); },
+        media:          function(rule){ mediaQueryExtractor(rule); },
         rule:           function(rule){ ruleExtractor(rule); },
-        'font-face':    function(rule){ console.log(rule); },
-        'keyframes':    function(rule){ console.log(rule); }
+        'font-face':    function(rule){ /* Doesn't have any pseudo rules => ignore */ },
+        'keyframes':    function(rule){ /* Ignore. Key in dict to prevent crashing */ }
     }
 
 
     function ruleExtractor(ruleast){
-        //1) foreach rule.selector
-        //1.a) pseudo.exec(sel)
-        //1.b) 
+        //RuleAst properties of importance
+            //declarations  [1->n]
+            //selectors     [1->n]
 
         $.each(ruleast.selectors, function(i, sel){
-            //testing casues the regex state machines to advance
-            //thus causing the exec to fail?
-            if(pseudos.test(sel)){
-                var type = pseudos.exec(sel);
+            if(pseudos.test(sel)){                  //test is much faster then exec => exec on pseudo rules only
+                var type = pseudos.exec(sel)[1];    //exec will return [full_match, group]
+                console.log(type);
             }
         });
     }
 
-    $.each(document.styleSheets, function extract_from_browser(i, ss){
+    function mediaQueryExtractor(ruleast){
+        console.log(ruleast);
+    }
+
+    $.each(document.styleSheets, function app_main(i, ss){
         var groupname = ss.href ? ss.href : 'inline-style';
         //console.groupCollapsed(groupname);
         console.group(groupname);
 
         $.each(ss.cssRules, function foreach_browser_rule(i, rule){
 
+            //output: AST by css-parser:
+                    //stylesheet
+                    //  rules[]
+                    //  declarations[]
+                    //  selectors[]
             var ast         = cssParser(rule.cssText);
             var rule        = ast.stylesheet.rules[0];
             var selectors   = rule.selectors
@@ -51,22 +59,6 @@ $(function app_main(){
         });
         console.groupEnd(groupname);
     });
-
-
-    //input: selector1, selectorN { ruleset }
-    //output: AST by css-parser:
-            //stylesheet
-            //  rules[]
-            //  declarations[]
-            //  selectors[]
-    function extractRule(rule, callback){
-        var ast = cssParser(rule.cssText);
-        $.each(ast.stylesheet.rules, function ast_stylesheet(i, astrule){
-            $.each(astrule.selectors, function ast_rule(i, sel){
-                callback(sel, astrule);
-            });
-        });
-    }
 
 
     function setPseudoRuleAsInline(sel, dotted, astrule){
