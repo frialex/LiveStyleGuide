@@ -28,14 +28,17 @@ $(function app_main(){
 
         $.each(ruleast.selectors, function(i, sel){
             if(pseudos.test(sel)){                  //test is much faster then exec => exec on pseudo rules only
-                var type = pseudos.exec(sel)[1];    //exec will return [full_match, group]
-                console.log(type);
+                var match = pseudos.exec(sel);    //exec will return [full_match, group]
+                var pseudo = match[1]
+
+                var dotted = sel.replace(':', '.');
+                setPseudoRuleAsInline(sel, dotted, ruleast);
             }
         });
     }
 
     function mediaQueryExtractor(ruleast){
-        console.log(ruleast);
+        //console.log(ruleast);
     }
 
     $.each(document.styleSheets, function app_main(i, ss){
